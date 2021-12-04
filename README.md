@@ -1,16 +1,6 @@
-# bytebank
+# Bytebank
 
-A new Flutter project.
+Projeto criado durante o "[Curso de Fundamentos de Flutter: Crie o seu primeiro App](https://cursos.alura.com.br/course/flutter-fundamentos)" feito na [Alura](https://www.alura.com.br/)
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Sobre o Projeto
+ByteBank é um projeto simples com um cadastro de transferências
