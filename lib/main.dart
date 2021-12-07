@@ -6,9 +6,13 @@ class ByteBankApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        body: ListaTransferencias(),
-      ),
+      home: ListaTransferencias(),
+      theme: ThemeData(
+          primaryColor: Colors.green[900],
+          accentColor: Colors.blueAccent[700],
+          buttonTheme: ButtonThemeData(
+              buttonColor: Colors.blueAccent[700],
+              textTheme: ButtonTextTheme.primary)),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -108,7 +112,6 @@ class ListaTransferenciasState extends State<ListaTransferencias> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Transferências'),
-        backgroundColor: Colors.green,
       ),
       body: ListView.builder(
         itemCount: widget._transferencias.length,
