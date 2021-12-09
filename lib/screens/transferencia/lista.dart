@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 const _tituloAppBar = 'Transferências';
 
+const _msgRemovidoSucesso = 'Transferência removida com sucesso!';
+
 class ListaTransferencias extends StatefulWidget {
   final List<Transferencia> _transferencias = [];
 
@@ -24,7 +26,7 @@ class ListaTransferenciasState extends State<ListaTransferencias> {
         itemCount: widget._transferencias.length,
         itemBuilder: (context, indice) {
           final _transferencia = widget._transferencias[indice];
-          return ItemTransferencia(_transferencia);
+          return ItemTransferencia(_transferencia, indice);
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -32,7 +34,7 @@ class ListaTransferenciasState extends State<ListaTransferencias> {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
             return FormularioTransferencia();
           })).then(
-            (transferenciaRecebida) => _atualiza(transferenciaRecebida),
+            (transferenciaRecebida) => _atualiza(transferenciaRecebida, null),
           );
         },
         child: Icon(Icons.add),
@@ -40,19 +42,28 @@ class ListaTransferenciasState extends State<ListaTransferencias> {
     );
   }
 
-  void _atualiza(Transferencia? transferenciaRecebida) {
+  void _atualiza(Transferencia? transferenciaRecebida, int? indice) {
     if (transferenciaRecebida != null) {
-      setState(() {
-        widget._transferencias.add(transferenciaRecebida);
-      });
+      if (indice == null) {
+        setState(() {
+          widget._transferencias.add(transferenciaRecebida);
+        });
+      }
     }
+  }
+
+  void removeTransferencia(int indice) {
+    setState(() {
+      widget._transferencias.removeAt(indice);
+    });
   }
 }
 
 class ItemTransferencia extends StatelessWidget {
   final Transferencia _transferencia;
+  final int _indice;
 
-  ItemTransferencia(this._transferencia);
+  ItemTransferencia(this._transferencia, this._indice);
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +72,31 @@ class ItemTransferencia extends StatelessWidget {
         leading: Icon(Icons.monetization_on),
         title: Text(_transferencia.valor.toString()),
         subtitle: Text(_transferencia.numeroConta),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.edit,
+                color: Colors.yellow[800],
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(_msgRemovidoSucesso),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
