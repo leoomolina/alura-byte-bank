@@ -26,7 +26,7 @@ class ListaTransferenciasState extends State<ListaTransferencias> {
         itemCount: widget._transferencias.length,
         itemBuilder: (context, indice) {
           final _transferencia = widget._transferencias[indice];
-          return ItemTransferencia(_transferencia, indice);
+          return ItemTransferencia(_transferencia);
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -61,9 +61,8 @@ class ListaTransferenciasState extends State<ListaTransferencias> {
 
 class ItemTransferencia extends StatelessWidget {
   final Transferencia _transferencia;
-  final int _indice;
 
-  ItemTransferencia(this._transferencia, this._indice);
+  ItemTransferencia(this._transferencia);
 
   @override
   Widget build(BuildContext context) {
