@@ -2,7 +2,6 @@ import 'package:bytebank/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 
 import 'database/app_database.dart';
-import 'models/contato.dart';
 
 void main() {
   runApp(ByteBankApp());

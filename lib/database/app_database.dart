@@ -2,43 +2,40 @@ import 'package:bytebank/models/contato.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-Future<Database> createDatabase() {
-  return getDatabasesPath().then((dbPath) {
-    // JOIN() => PEGAR STRING E JUNTAR A PARTIR DO SISTEMA QUE TIVER OPERANDO (ios, android, etc)
-    final String path = join(dbPath, 'bytebank.db');
+Future<Database> getDatabase() async {
+  // JOIN() => PEGAR STRING E JUNTAR A PARTIR DO SISTEMA QUE TIVER OPERANDO (ios, android, etc)
+  final String path = join(await getDatabasesPath(), 'bytebank.db');
 
-    return openDatabase(path, onCreate: (db, version) {
-      db.execute('CREATE TABLE contatos('
-          'id INTEGER PRIMARY KEY, '
-          'nome TEXT, '
-          'numero_conta INTEGER)');
-    }, version: 1);
-  });
+  return openDatabase(path, onCreate: (db, version) {
+    db.execute('CREATE TABLE contatos('
+        'id INTEGER PRIMARY KEY, '
+        'nome TEXT, '
+        'numero_conta INTEGER)');
+  }, version: 1, onDowngrade: onDatabaseDowngradeDelete);
 }
 
-Future<int> save(Contato contato) {
-  return createDatabase().then((db) {
-    final Map<String, dynamic> contatoMap = Map();
+Future<int> save(Contato contato) async {
+  final Database db = await getDatabase();
 
-    contatoMap['nome'] = contato.nome;
-    contatoMap['numero_conta'] = contato.numeroConta;
+  final Map<String, dynamic> contatoMap = Map();
 
-    return db.insert('contatos', contatoMap);
-  });
+  contatoMap['nome'] = contato.nome;
+  contatoMap['numero_conta'] = contato.numeroConta;
+
+  return db.insert('contatos', contatoMap);
 }
 
-Future<List<Contato>> findAll() {
-  return createDatabase().then((db) {
-    return db.query('contatos').then((maps) {
-      final List<Contato> contatos = [];
+Future<List<Contato>> findAll() async {
+  final Database db = await getDatabase();
 
-      for (Map<String, dynamic> map in maps) {
-        final Contato contato =
-            Contato(map['id'], map['nome'], map['numero_conta']);
+  final List<Map<String, Object?>> result = await db.query('contatos');
+  final List<Contato> contatos = [];
 
-        contatos.add(contato);
-      }
-      return contatos;
-    });
-  });
+  for (Map<String, dynamic> row in result) {
+    final Contato contato =
+        Contato(row['id'], row['nome'], row['numero_conta']);
+
+    contatos.add(contato);
+  }
+  return contatos;
 }
