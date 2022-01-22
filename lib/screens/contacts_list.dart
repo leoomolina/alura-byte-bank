@@ -1,4 +1,3 @@
-import 'package:bytebank/database/app_database.dart';
 import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/models/contato.dart';
 import 'package:bytebank/screens/contact_form.dart';
@@ -65,20 +64,36 @@ class _ContactsListState extends State<ContactsList> {
   }
 }
 
-class _ContatoItem extends StatelessWidget {
+class _ContatoItem extends StatefulWidget {
   final Contato contato;
   _ContatoItem(this.contato);
 
+  @override
+  State<_ContatoItem> createState() => _ContatoItemState();
+}
+
+class _ContatoItemState extends State<_ContatoItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
         title: Text(
-          contato.nome,
+          widget.contato.nome,
           style: TextStyle(fontSize: 24),
         ),
+        trailing: IconButton(
+          icon: Icon(Icons.edit),
+          color: Colors.orange,
+          iconSize: 32,
+          onPressed: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(
+                    builder: (context) => ContactForm(contato: widget.contato)))
+                .then((value) => setState(() {}));
+          },
+        ),
         subtitle: Text(
-          contato.numeroConta.toString(),
+          widget.contato.numeroConta.toString(),
           style: TextStyle(fontSize: 16),
         ),
       ),
