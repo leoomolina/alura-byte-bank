@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/models/contato.dart';
 import 'package:bytebank/screens/contact_form.dart';
@@ -73,6 +75,13 @@ class _ContatoItem extends StatefulWidget {
 }
 
 class _ContatoItemState extends State<_ContatoItem> {
+  void refreshData() {}
+
+  FutureOr onGoBack(dynamic value) {
+    refreshData();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -89,7 +98,7 @@ class _ContatoItemState extends State<_ContatoItem> {
             Navigator.of(context)
                 .push(MaterialPageRoute(
                     builder: (context) => ContactForm(contato: widget.contato)))
-                .then((value) => setState(() {}));
+                .then(onGoBack);
           },
         ),
         subtitle: Text(

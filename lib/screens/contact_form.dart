@@ -14,7 +14,7 @@ class _ContactFormState extends State<ContactForm> {
   final ContactDao _dao = ContactDao();
 
   String textTitle = 'Novo contato';
-  String textButton = 'Gravar';
+  String textButtonSubmit = 'Gravar';
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class _ContactFormState extends State<ContactForm> {
           text: widget.contato!.numeroConta.toString());
 
       textTitle = 'Editar contato';
-      textButton = 'Atualizar';
+      textButtonSubmit = 'Atualizar';
     }
 
     return Scaffold(
@@ -65,7 +65,7 @@ class _ContactFormState extends State<ContactForm> {
               child: SizedBox(
                 width: double.maxFinite,
                 child: ElevatedButton(
-                  child: Text(textButton),
+                  child: Text(textButtonSubmit),
                   onPressed: () {
                     final String name = _nameController.text;
                     final int? numConta =
@@ -86,7 +86,27 @@ class _ContactFormState extends State<ContactForm> {
                   },
                 ),
               ),
-            )
+            ),
+            if (widget.contato != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: SizedBox(
+                  width: double.maxFinite,
+                  child: ElevatedButton(
+                    child: Text('Excluir'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.red,
+                    ),
+                    onPressed: () {
+                      if (widget.contato != null) {
+                        _dao
+                            .remove(widget.contato!.id)
+                            .then((value) => Navigator.pop(context));
+                      }
+                    },
+                  ),
+                ),
+              ),
           ],
         ),
       ),
