@@ -29,8 +29,9 @@ Future<List<Transacao>> findAll() async {
   Client client = InterceptedClient.build(
     interceptors: [LoggingInterceptor()],
   );
-  final Response response =
-      await client.get(Uri.parse('http://192.168.5.66:8080/transactions'));
+  final Response response = await client
+      .get(Uri.parse('http://192.168.165.199:8080/transactions'))
+      .timeout(Duration(seconds: 5));
   final List<dynamic> decodedJson = jsonDecode(response.body);
   final List<Transacao> transacoes = [];
   for (Map<String, dynamic> transactionJson in decodedJson) {

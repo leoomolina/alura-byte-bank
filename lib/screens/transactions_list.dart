@@ -1,3 +1,4 @@
+import 'package:bytebank/components/centered_message.dart';
 import 'package:bytebank/components/progress.dart';
 import 'package:bytebank/http/webclient.dart';
 import 'package:bytebank/models/transacao.dart';
@@ -24,32 +25,39 @@ class TransactionsList extends StatelessWidget {
               break;
             case ConnectionState.done:
               final List<Transacao>? transacoes = snapshot.data;
-              return ListView.builder(
-                itemBuilder: (context, index) {
-                  final Transacao transacao = transacoes![index];
-                  return Card(
-                    child: ListTile(
-                      leading: Icon(Icons.monetization_on),
-                      title: Text(
-                        transacao.valor.toString(),
-                        style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold,
+              if (snapshot.hasData) {
+                if (transacoes!.isNotEmpty) {
+                  return ListView.builder(
+                    itemBuilder: (context, index) {
+                      final Transacao transacao = transacoes[index];
+                      return Card(
+                        child: ListTile(
+                          leading: Icon(Icons.monetization_on),
+                          title: Text(
+                            transacao.valor.toString(),
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            transacao.contato.numeroConta.toString(),
+                            style: TextStyle(
+                              fontSize: 16.0,
+                            ),
+                          ),
                         ),
-                      ),
-                      subtitle: Text(
-                        transacao.contato.numeroConta.toString(),
-                        style: TextStyle(
-                          fontSize: 16.0,
-                        ),
-                      ),
-                    ),
+                      );
+                    },
+                    itemCount: transacoes.length,
                   );
-                },
-                itemCount: transacoes!.length,
-              );
+                }
+              }
           }
-          return Text('unknow error');
+          return CenteredMessage(
+            'Nenhuma transação encontrada',
+            icon: Icons.warning,
+          );
         },
       ),
     );
