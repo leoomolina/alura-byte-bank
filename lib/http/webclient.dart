@@ -30,14 +30,14 @@ Future<List<Transacao>> findAll() async {
     interceptors: [LoggingInterceptor()],
   );
   final Response response = await client
-      .get(Uri.parse('http://192.168.165.199:8080/transactions'))
+      .get(Uri.parse('http://192.168.5.66:8080/transactions'))
       .timeout(Duration(seconds: 5));
   final List<dynamic> decodedJson = jsonDecode(response.body);
   final List<Transacao> transacoes = [];
   for (Map<String, dynamic> transactionJson in decodedJson) {
     final Map<String, dynamic> contactJson = transactionJson['contact'];
     transacoes.add(Transacao(transactionJson['value'],
-        Contato(0, contactJson['name'], contactJson['account_number'])));
+        Contato(0, contactJson['name'], contactJson['accountNumber'])));
   }
 
   return transacoes;

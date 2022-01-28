@@ -41,7 +41,10 @@ class TransactionsList extends StatelessWidget {
                             ),
                           ),
                           subtitle: Text(
-                            transacao.contato.numeroConta.toString(),
+                            'CC: ' +
+                                transacao.contato.numeroConta.toString() +
+                                ' - ' +
+                                transacao.contato.nome,
                             style: TextStyle(
                               fontSize: 16.0,
                             ),
