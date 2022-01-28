@@ -1,11 +1,8 @@
 import 'package:bytebank/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 
-import 'http/webclient.dart';
-
 void main() {
   runApp(ByteBankApp());
-  findAll().then((transacoes) => print('Novas transações: $transacoes'));
 }
 
 class ByteBankApp extends StatelessWidget {

@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:bytebank/components/progress.dart';
 import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/models/contato.dart';
 import 'package:bytebank/screens/contact_form.dart';
+import 'package:bytebank/screens/transaction_form.dart';
 import 'package:flutter/material.dart';
 
 class ContactsList extends StatefulWidget {
@@ -38,7 +37,13 @@ class _ContactsListState extends State<ContactsList> {
                 case ConnectionState.done:
                   final Contato contato = contatos![index];
 
-                  return _ContatoItem(contato);
+                  return _ContatoItem(
+                    contato,
+                    onClick: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => TransactionForm(contato)));
+                    },
+                  );
               }
               return Text('unknow error');
             },
@@ -60,20 +65,18 @@ class _ContactsListState extends State<ContactsList> {
 
 class _ContatoItem extends StatefulWidget {
   final Contato contato;
-  _ContatoItem(this.contato);
+  final Function onClick;
+
+  _ContatoItem(
+    this.contato, {
+    required this.onClick,
+  });
 
   @override
   State<_ContatoItem> createState() => _ContatoItemState();
 }
 
 class _ContatoItemState extends State<_ContatoItem> {
-  void refreshData() {}
-
-  FutureOr onGoBack(dynamic value) {
-    refreshData();
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -87,16 +90,15 @@ class _ContatoItemState extends State<_ContatoItem> {
           color: Colors.orange,
           iconSize: 32,
           onPressed: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(
-                    builder: (context) => ContactForm(contato: widget.contato)))
-                .then(onGoBack);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ContactForm(contato: widget.contato)));
           },
         ),
         subtitle: Text(
           widget.contato.numeroConta.toString(),
           style: TextStyle(fontSize: 16),
         ),
+        onTap: () => widget.onClick(),
       ),
     );
   }
