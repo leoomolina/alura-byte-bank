@@ -1,4 +1,4 @@
-import 'package:bytebank/http/webclient.dart';
+import 'package:bytebank/http/webclients/transaction_webclient.dart';
 import 'package:bytebank/models/contato.dart';
 import 'package:bytebank/models/transacao.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +14,13 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _valueController = TextEditingController();
+  final TransactionWebClient _webClient = TransactionWebClient();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('New transaction'),
+        title: Text('Nova Transação'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -48,7 +49,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 child: TextField(
                   controller: _valueController,
                   style: TextStyle(fontSize: 24.0),
-                  decoration: InputDecoration(labelText: 'Value'),
+                  decoration: InputDecoration(labelText: 'Valor'),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                 ),
               ),
@@ -57,13 +58,15 @@ class _TransactionFormState extends State<TransactionForm> {
                 child: SizedBox(
                   width: double.maxFinite,
                   child: ElevatedButton(
-                    child: Text('Transfer'),
+                    child: Text('Transferir'),
                     onPressed: () {
                       final double? value =
                           double.tryParse(_valueController.text);
                       final transactionCreated =
                           Transacao(value!, widget.contact);
-                      save(transactionCreated).then((transaction) {});
+                      _webClient
+                          .save(transactionCreated)
+                          .then((transaction) {});
 
                       Navigator.pop(context);
                     },
