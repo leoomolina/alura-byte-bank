@@ -1,3 +1,4 @@
+import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:bytebank/http/webclients/transaction_webclient.dart';
 import 'package:bytebank/models/contato.dart';
 import 'package:bytebank/models/transacao.dart';
@@ -19,8 +20,9 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Nova Transação'),
+      appBar: ByteBankAppBar(
+        context: context,
+        title: 'Nova Transação',
       ),
       body: SingleChildScrollView(
         child: Padding(

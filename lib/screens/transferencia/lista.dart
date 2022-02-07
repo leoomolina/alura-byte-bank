@@ -1,3 +1,4 @@
+import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:bytebank/models/transferencia.dart';
 import 'package:bytebank/screens/transferencia/formulario.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,9 @@ class ListaTransferenciasState extends State<ListaTransferencias> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_tituloAppBar),
+      appBar: ByteBankAppBar(
+        context: context,
+        title: _tituloAppBar,
       ),
       body: ListView.builder(
         itemCount: widget._transferencias.length,

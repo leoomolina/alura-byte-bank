@@ -1,8 +1,9 @@
+import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:bytebank/components/editor.dart';
 import 'package:bytebank/models/transferencia.dart';
 import 'package:flutter/material.dart';
 
-const _tituloAppBar = 'Cadastrando transferência';
+const _tituloAppBar = 'Cadastrando tsransferência';
 
 const _rotuloCampoNumeroConta = 'Número da Conta';
 const _dicaCampoNumeroConta = '0000';
@@ -28,8 +29,9 @@ class FormularioTransferenciaState extends State<FormularioTransferencia> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_tituloAppBar),
+      appBar: ByteBankAppBar(
+        context: context,
+        title: _tituloAppBar,
       ),
       body: SingleChildScrollView(
         child: Column(children: <Widget>[

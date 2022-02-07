@@ -1,3 +1,4 @@
+import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:bytebank/components/centered_message.dart';
 import 'package:bytebank/components/progress.dart';
 import 'package:bytebank/http/webclients/transaction_webclient.dart';
@@ -11,8 +12,9 @@ class TransactionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Transactions'),
+      appBar: ByteBankAppBar(
+        context: context,
+        title: 'Transações',
       ),
       body: FutureBuilder<List<Transacao>>(
         future: _webClient.findAll(),

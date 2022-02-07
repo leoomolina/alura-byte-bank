@@ -1,3 +1,4 @@
+import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:bytebank/screens/contacts_list.dart';
 import 'package:bytebank/screens/transactions_list.dart';
 import 'package:flutter/material.dart';
@@ -6,9 +7,9 @@ class Dashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Dashboard'),
-        backgroundColor: Theme.of(context).primaryColor,
+      appBar: ByteBankAppBar(
+        context: context,
+        title: 'Dashboard',
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

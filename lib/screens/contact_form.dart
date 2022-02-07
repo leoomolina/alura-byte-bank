@@ -1,3 +1,4 @@
+import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/models/contato.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +32,9 @@ class _ContactFormState extends State<ContactForm> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(textTitle),
+      appBar: ByteBankAppBar(
+        context: context,
+        title: textTitle,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
