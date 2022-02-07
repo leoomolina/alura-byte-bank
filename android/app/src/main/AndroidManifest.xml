@@ -2,7 +2,7 @@
     package="com.example.bytebank">
    <application
         android:label="bytebank"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_bytebank_launcher">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
