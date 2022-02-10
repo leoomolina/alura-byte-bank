@@ -1,4 +1,6 @@
 import 'package:bytebank/components/byte_bank_app_bar.dart';
+import 'package:bytebank/components/response_dialog.dart';
+import 'package:bytebank/components/transaction_auth_dialog.dart';
 import 'package:bytebank/http/webclients/transaction_webclient.dart';
 import 'package:bytebank/models/contato.dart';
 import 'package:bytebank/models/transacao.dart';
@@ -64,13 +66,28 @@ class _TransactionFormState extends State<TransactionForm> {
                     onPressed: () {
                       final double? value =
                           double.tryParse(_valueController.text);
+
+                      if (value == null) {
+                        showDialog(
+                            context: context,
+                            builder: (contextDialog) {
+                              return FailureDialog(
+                                  'Insira o valor da transferência');
+                            });
+                      }
+
                       final transactionCreated =
                           Transacao(value!, widget.contact);
-                      _webClient
-                          .save(transactionCreated)
-                          .then((transaction) {});
 
-                      Navigator.pop(context);
+                      showDialog(
+                          context: context,
+                          builder: (contextDialog) {
+                            return TransactionAuthDialog(
+                              onConfirm: (String password) {
+                                _save(transactionCreated, password, context);
+                              },
+                            );
+                          });
                     },
                   ),
                 ),
@@ -80,5 +97,28 @@ class _TransactionFormState extends State<TransactionForm> {
         ),
       ),
     );
+  }
+
+  void _save(
+    Transacao transactionCreated,
+    String password,
+    BuildContext context,
+  ) async {
+    _webClient
+        .save(transactionCreated, password)
+        .then((transaction) {
+          return showDialog(
+              context: context,
+              builder: (contextDialog) =>
+                  SuccessDialog('Transação gravada com sucesso'));
+        })
+        .then((value) => Navigator.pop(context))
+        .catchError((e) {
+          return showDialog(
+              context: context,
+              builder: (contextDialog) {
+                return FailureDialog(e.message);
+              });
+        }, test: (e) => e is Exception);
   }
 }

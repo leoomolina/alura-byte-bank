@@ -32,28 +32,33 @@ class TransactionsList extends StatelessWidget {
               if (snapshot.hasData) {
                 if (transacoes!.isNotEmpty) {
                   return ListView.builder(
+                    scrollDirection: Axis.vertical,
                     itemBuilder: (context, index) {
                       final Transacao transacao = transacoes[index];
-                      return Card(
-                        child: ListTile(
-                          leading: Icon(Icons.monetization_on),
-                          title: Text(
-                            transacao.valor.toString(),
-                            style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
+                      return Column(
+                        children: [
+                          Card(
+                            child: ListTile(
+                              leading: Icon(Icons.monetization_on),
+                              title: Text(
+                                transacao.valor.toString(),
+                                style: TextStyle(
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Text(
+                                'CC: ' +
+                                    transacao.contato.numeroConta.toString() +
+                                    ' - ' +
+                                    transacao.contato.nome,
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                              ),
                             ),
                           ),
-                          subtitle: Text(
-                            'CC: ' +
-                                transacao.contato.numeroConta.toString() +
-                                ' - ' +
-                                transacao.contato.nome,
-                            style: TextStyle(
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ),
+                        ],
                       );
                     },
                     itemCount: transacoes.length,

@@ -11,11 +11,19 @@ class TransactionWebClient {
     return decodedJson.map((dynamic json) => Transacao.fromJson(json)).toList();
   }
 
-  Future<Transacao> save(Transacao transacao) async {
+  Future<Transacao> save(Transacao transacao, String password) async {
     final String transactionJson = jsonEncode(transacao.toJson());
     final Response response = await client.post(Uri.parse(baseUrl),
-        headers: {'Content-type': 'application/json', 'password': '1000'},
+        headers: {'Content-type': 'application/json', 'password': password},
         body: transactionJson);
+
+    if (response.statusCode == 400) {
+      throw new Exception("Ops! Ocorreu um erro durante a transação.");
+    }
+
+    if (response.statusCode == 401) {
+      throw new Exception("Autenticação falhou");
+    }
 
     return Transacao.fromJson(jsonDecode(response.body));
   }
