@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:bytebank/components/response_dialog.dart';
 import 'package:bytebank/components/transaction_auth_dialog.dart';
@@ -104,21 +107,42 @@ class _TransactionFormState extends State<TransactionForm> {
     String password,
     BuildContext context,
   ) async {
+    Transacao? transaction = await _send(transactionCreated, password, context);
+
+    await _showSuccessfulMessage(transaction, context);
+  }
+
+  Future<Transacao?> _send(Transacao transactionCreated, String password,
+      BuildContext context) async {
     final Transacao? transaction =
         await _webClient.save(transactionCreated, password).catchError((e) {
-      showDialog(
+      _showFailureMessage(context, message: 'Erro de timeout');
+    }, test: (e) => e is TimeoutException).catchError((e) {
+      _showFailureMessage(context, message: e.message);
+    }, test: (e) => e is HttpException).catchError((e) {
+      _showFailureMessage(context);
+    }, test: (e) => e is Exception);
+    return transaction;
+  }
+
+  void _showFailureMessage(BuildContext context,
+      {message = 'Erro desconhecido'}) {
+    showDialog(
+        context: context,
+        builder: (contextDialog) {
+          return FailureDialog(message);
+        });
+  }
+
+  Future<void> _showSuccessfulMessage(
+      Transacao? transaction, BuildContext context) async {
+    if (transaction != null) {
+      await showDialog(
           context: context,
           builder: (contextDialog) {
-            return FailureDialog(e.message);
+            return SuccessDialog('Transação gravada com sucesso');
           });
-    }, test: (e) => e is Exception);
-
-    if (transaction != null) {
-      return showDialog(
-              context: context,
-              builder: (contextDialog) =>
-                  SuccessDialog('Transação gravada com sucesso'))
-          .then((value) => Navigator.pop(context));
+      Navigator.pop(context);
     }
   }
 }
