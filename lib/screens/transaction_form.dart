@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'dart:io';
-
+import 'dart:developer';
 import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:bytebank/components/response_dialog.dart';
 import 'package:bytebank/components/transaction_auth_dialog.dart';
@@ -8,6 +7,7 @@ import 'package:bytebank/http/webclients/transaction_webclient.dart';
 import 'package:bytebank/models/contato.dart';
 import 'package:bytebank/models/transacao.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class TransactionForm extends StatefulWidget {
   final Contato contact;
@@ -21,9 +21,11 @@ class TransactionForm extends StatefulWidget {
 class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _valueController = TextEditingController();
   final TransactionWebClient _webClient = TransactionWebClient();
+  final String idTransacao = Uuid().v4();
 
   @override
   Widget build(BuildContext context) {
+    log('idTransacao: $idTransacao');
     return Scaffold(
       appBar: ByteBankAppBar(
         context: context,
@@ -80,7 +82,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       }
 
                       final transactionCreated =
-                          Transacao(value!, widget.contact);
+                          Transacao(idTransacao, value!, widget.contact);
 
                       showDialog(
                           context: context,

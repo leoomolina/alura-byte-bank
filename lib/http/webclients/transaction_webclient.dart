@@ -12,6 +12,9 @@ class TransactionWebClient {
 
   Future<Transacao?> save(Transacao transacao, String password) async {
     final String transactionJson = jsonEncode(transacao.toJson());
+
+    await Future.delayed(Duration(seconds: 10));
+
     final Response response = await client.post(Uri.parse(baseUrl),
         headers: {'Content-type': 'application/json', 'password': password},
         body: transactionJson);
@@ -20,12 +23,21 @@ class TransactionWebClient {
       return Transacao.fromJson(jsonDecode(response.body));
     }
 
-    throw HttpException(_statusCodeResponses[response.statusCode]);
+    throw HttpException(_getMessages(response.statusCode));
+  }
+
+  String? _getMessages(int statusCode) {
+    if (_statusCodeResponses[statusCode] != null) {
+      return _statusCodeResponses[statusCode];
+    }
+
+    return 'Erro desconhecido';
   }
 
   static final Map<int, String> _statusCodeResponses = {
     400: "Ops! Ocorreu um erro durante a transação.",
-    401: "Autenticação falhou"
+    401: "Autenticação falhou",
+    409: "Transação cadastrada já existe"
   };
 }
 
