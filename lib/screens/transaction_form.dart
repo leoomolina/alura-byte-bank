@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:bytebank/components/byte_bank_app_bar.dart';
+import 'package:bytebank/components/progress.dart';
 import 'package:bytebank/components/response_dialog.dart';
 import 'package:bytebank/components/transaction_auth_dialog.dart';
 import 'package:bytebank/http/webclients/transaction_webclient.dart';
@@ -23,6 +24,8 @@ class _TransactionFormState extends State<TransactionForm> {
   final TransactionWebClient _webClient = TransactionWebClient();
   final String idTransacao = Uuid().v4();
 
+  bool _carregandoDados = false;
+
   @override
   Widget build(BuildContext context) {
     log('idTransacao: $idTransacao');
@@ -37,6 +40,10 @@ class _TransactionFormState extends State<TransactionForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Visibility(
+                child: Progress('Enviando...'),
+                visible: _carregandoDados,
+              ),
               Text(
                 widget.contact.nome,
                 style: TextStyle(
@@ -116,6 +123,9 @@ class _TransactionFormState extends State<TransactionForm> {
 
   Future<Transacao?> _send(Transacao transactionCreated, String password,
       BuildContext context) async {
+    setState(() {
+      _carregandoDados = true;
+    });
     final Transacao? transaction =
         await _webClient.save(transactionCreated, password).catchError((e) {
       _showFailureMessage(context, message: 'Erro de timeout');
@@ -123,7 +133,11 @@ class _TransactionFormState extends State<TransactionForm> {
       _showFailureMessage(context, message: e.message);
     }, test: (e) => e is HttpException).catchError((e) {
       _showFailureMessage(context);
-    }, test: (e) => e is Exception);
+    }, test: (e) => e is Exception).whenComplete(() {
+      setState(() {
+        _carregandoDados = false;
+      });
+    });
     return transaction;
   }
 

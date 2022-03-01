@@ -13,7 +13,7 @@ class TransactionWebClient {
   Future<Transacao?> save(Transacao transacao, String password) async {
     final String transactionJson = jsonEncode(transacao.toJson());
 
-    await Future.delayed(Duration(seconds: 10));
+    //await Future.delayed(Duration(seconds: 2));
 
     final Response response = await client.post(Uri.parse(baseUrl),
         headers: {'Content-type': 'application/json', 'password': password},
