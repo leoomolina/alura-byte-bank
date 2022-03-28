@@ -23,10 +23,10 @@ class TransactionWebClient {
       return Transacao.fromJson(jsonDecode(response.body));
     }
 
-    throw HttpException(_getMessages(response.statusCode));
+    throw HttpException(_getMessage(response.statusCode), response.statusCode);
   }
 
-  String? _getMessages(int statusCode) {
+  String? _getMessage(int statusCode) {
     if (_statusCodeResponses[statusCode] != null) {
       return _statusCodeResponses[statusCode];
     }
@@ -43,6 +43,7 @@ class TransactionWebClient {
 
 class HttpException implements Exception {
   final String? message;
+  final int? statusCode;
 
-  HttpException(this.message);
+  HttpException(this.message, this.statusCode);
 }
