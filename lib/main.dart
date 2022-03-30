@@ -1,10 +1,12 @@
 import 'dart:async';
 
-import 'package:bytebank/screens/dashboard.dart';
+import 'package:bytebank/models/saldo.dart';
+import 'package:bytebank/screens/dashboard/dashboard.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +21,12 @@ void main() async {
   }
 
   runZonedGuarded<Future<void>>(() async {
-    runApp(ByteBankApp());
+    runApp(
+      ChangeNotifierProvider(
+        create: (context) => Saldo(0),
+        child: ByteBankApp(),
+      ),
+    );
   }, FirebaseCrashlytics.instance.recordError);
 }
 

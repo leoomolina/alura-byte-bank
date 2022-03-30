@@ -1,4 +1,5 @@
 import 'package:bytebank/components/byte_bank_app_bar.dart';
+import 'package:bytebank/screens/dashboard/saldo.dart';
 import 'package:bytebank/screens/contacts_list.dart';
 import 'package:bytebank/screens/transactions_list.dart';
 import 'package:flutter/material.dart';
@@ -9,39 +10,11 @@ class Dashboard extends StatelessWidget {
     return Scaffold(
       appBar: ByteBankAppBar(
         context: context,
-        title: 'Dashboard',
+        title: 'ByteBank',
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(child: Image.asset('images/bytebank_logo.png')),
-          ),
-          Container(
-            height: 120,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _FeatureItem(
-                  'Transferências',
-                  Icons.monetization_on,
-                  onClick: () {
-                    _mostrarListaContatos(context);
-                  },
-                ),
-                _FeatureItem(
-                  'Transaction Feed',
-                  Icons.description,
-                  onClick: () {
-                    _mostrarListaTransacoes(context);
-                  },
-                ),
-              ],
-            ),
-          ),
-        ],
+      body: Align(
+        alignment: Alignment.topCenter,
+        child: SaldoCard(),
       ),
     );
   }
