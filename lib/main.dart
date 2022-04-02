@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'models/transferencias.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -21,12 +23,17 @@ void main() async {
   }
 
   runZonedGuarded<Future<void>>(() async {
-    runApp(
-      ChangeNotifierProvider(
-        create: (context) => Saldo(0),
-        child: ByteBankApp(),
-      ),
-    );
+    runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => Saldo(0),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => Transferencias(),
+        )
+      ],
+      child: ByteBankApp(),
+    ));
   }, FirebaseCrashlytics.instance.recordError);
 }
 
