@@ -1,9 +1,11 @@
 import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:bytebank/screens/dashboard/saldo.dart';
 import 'package:bytebank/screens/transferencia/formulario.dart';
+import 'package:bytebank/screens/transferencia/ultimas.dart';
 import 'package:flutter/material.dart';
 
 import '../deposito/formulario.dart';
+import '../transferencia/lista.dart';
 
 class Dashboard extends StatelessWidget {
   @override
@@ -41,7 +43,17 @@ class Dashboard extends StatelessWidget {
                 style: ElevatedButton.styleFrom(primary: Colors.green),
               ),
             ],
-          )
+          ),
+          UltimasTransferencias(),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+                return ListaTransferencias();
+              }));
+            },
+            child: Text('Ver todas transferências'),
+            style: ElevatedButton.styleFrom(primary: Colors.green),
+          ),
         ],
       ),
     );
