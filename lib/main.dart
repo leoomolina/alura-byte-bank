@@ -1,10 +1,10 @@
 import 'dart:async';
-
-import 'package:bytebank/screens/dashboard.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'components/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,22 +19,23 @@ void main() async {
   }
 
   runZonedGuarded<Future<void>>(() async {
-    runApp(ByteBankApp());
+    BlocOverrides.runZoned(() {
+      runApp(ByteBankApp());
+    }, blocObserver: LogBloc());
   }, FirebaseCrashlytics.instance.recordError);
+}
+
+class LogBloc extends BlocObserver {
+  @override
+  void onChange(BlocBase bloc, Change change) {
+    print("${bloc.runtimeType} > $change");
+    super.onChange(bloc, change);
+  }
 }
 
 class ByteBankApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Dashboard(),
-      theme: ThemeData(
-        primaryColor: Colors.green[900],
-        buttonTheme: ButtonThemeData(
-            buttonColor: Colors.blueAccent[700],
-            textTheme: ButtonTextTheme.primary),
-      ),
-      debugShowCheckedModeBanner: true,
-    );
+    return byteBankTheme;
   }
 }
