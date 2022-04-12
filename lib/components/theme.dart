@@ -1,9 +1,8 @@
-import 'package:bytebank/screens/counter.dart';
 import 'package:flutter/material.dart';
 import '../screens/dashboard.dart';
 
 final byteBankTheme = MaterialApp(
-  home: CounterContainer(),
+  home: DashboardContainer(),
   theme: ThemeData(
     primaryColor: Colors.green[900],
     buttonTheme: ButtonThemeData(

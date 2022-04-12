@@ -1,3 +1,4 @@
+import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,10 +11,7 @@ class NameCubit extends Cubit<String> {
 class NameContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => NameCubit('LEONARDO'),
-      child: NameView(),
-    );
+    return NameView();
   }
 }
 
@@ -25,8 +23,9 @@ class NameView extends StatelessWidget {
     _nameController.text = context.read<NameCubit>().state;
 
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Alterar nome'),
+        appBar: ByteBankAppBar(
+          context: context,
+          title: 'Alterar nome',
         ),
         body: Column(
           children: [
