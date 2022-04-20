@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'byte_bank_app_bar.dart';
+
 class Progress extends StatelessWidget {
   final String message;
 
@@ -24,6 +26,19 @@ class Progress extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class ProgressView extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: ByteBankAppBar(
+        context: context,
+        title: 'Processando',
+      ),
+      body: Progress('Enviando...'),
     );
   }
 }

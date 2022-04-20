@@ -92,8 +92,7 @@ class _ContactsListState extends State<ContactsList> {
                 return _ContatoItem(
                   contato,
                   onClick: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => TransactionForm(contato)));
+                    push(context, TransactionFormContainer(contato));
                   },
                 );
               },
