@@ -1,7 +1,7 @@
-// ignore_for_file: import_of_legacy_library_into_null_safe
 import 'dart:async';
 import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:bytebank/components/container.dart';
+import 'package:bytebank/components/error.dart';
 import 'package:bytebank/components/progress.dart';
 import 'package:bytebank/components/response_dialog.dart';
 import 'package:bytebank/components/transaction_auth_dialog.dart';
@@ -11,7 +11,6 @@ import 'package:bytebank/models/transacao.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:uuid/uuid.dart';
 
 @immutable
@@ -36,11 +35,60 @@ class SentState extends TransactionFormState {
 
 @immutable
 class FatalErrorTransactionFormState extends TransactionFormState {
-  const FatalErrorTransactionFormState();
+  final String _message;
+
+  const FatalErrorTransactionFormState(this._message);
 }
 
 class TransactionFormCubit extends Cubit<TransactionFormState> {
   TransactionFormCubit() : super(ShowFormState());
+
+  void save(Transacao transactionCreated, String password,
+      BuildContext context) async {
+    emit(SendingState());
+    await _send(transactionCreated, password, context);
+  }
+
+  _send(Transacao transactionCreated, String password,
+      BuildContext context) async {
+    await TransactionWebClient()
+        .save(transactionCreated, password)
+        .then((transaction) => emit(SentState()))
+        .catchError((e) {
+      if (FirebaseCrashlytics.instance.isCrashlyticsCollectionEnabled) {
+        FirebaseCrashlytics.instance.setCustomKey('exception', e.toString());
+        FirebaseCrashlytics.instance.setCustomKey('http_code', e.statusCode);
+        FirebaseCrashlytics.instance
+            .setCustomKey('http_body', transactionCreated.toString());
+
+        FirebaseCrashlytics.instance.recordError(e, null);
+      }
+
+      emit(FatalErrorTransactionFormState('Erro de timeout'));
+    }, test: (e) => e is TimeoutException).catchError((e) {
+      if (FirebaseCrashlytics.instance.isCrashlyticsCollectionEnabled) {
+        FirebaseCrashlytics.instance.setCustomKey('exception', e.toString());
+        FirebaseCrashlytics.instance.setCustomKey('http_code', e.statusCode);
+        FirebaseCrashlytics.instance
+            .setCustomKey('http_body', transactionCreated.toString());
+
+        FirebaseCrashlytics.instance.recordError(e, null);
+      }
+
+      emit(FatalErrorTransactionFormState(e.message));
+    }, test: (e) => e is HttpException).catchError((e) {
+      if (FirebaseCrashlytics.instance.isCrashlyticsCollectionEnabled) {
+        FirebaseCrashlytics.instance.setCustomKey('exception', e.toString());
+        FirebaseCrashlytics.instance.setCustomKey('http_code', e.statusCode);
+        FirebaseCrashlytics.instance
+            .setCustomKey('http_body', transactionCreated.toString());
+
+        FirebaseCrashlytics.instance.recordError(e.toString(), null);
+      }
+
+      emit(FatalErrorTransactionFormState(e.message));
+    }, test: (e) => e is Exception).whenComplete(() {});
+  }
 }
 
 class TransactionFormContainer extends BlocContainer {
@@ -54,7 +102,18 @@ class TransactionFormContainer extends BlocContainer {
       create: (BuildContext context) {
         return TransactionFormCubit();
       },
-      child: _TransactionFormStateless(_contato),
+      child: BlocListener<TransactionFormCubit, TransactionFormState>(
+          listener: (context, state) async {
+            if (state is SentState) {
+              await showDialog(
+                  context: context,
+                  builder: (contextDialog) {
+                    return SuccessDialog('Transação gravada com sucesso');
+                  });
+              Navigator.pop(context);
+            }
+          },
+          child: _TransactionFormStateless(_contato)),
     );
   }
 }
@@ -69,106 +128,21 @@ class _TransactionFormStateless extends StatelessWidget {
     return Scaffold(
         body: BlocBuilder<TransactionFormCubit, TransactionFormState>(
       builder: (context, state) {
-        if (state is ShowFormState) return _BasicForm(this.contato);
+        if (state is ShowFormState) {
+          return _BasicForm(this.contato);
+        }
 
-        if (state is SendingState) return ProgressView();
+        if (state is SendingState || state is SentState) {
+          return ProgressView();
+        }
 
-        if (state is SentState) Navigator.pop(context);
+        if (state is FatalErrorTransactionFormState) {
+          return ErrorView(state._message);
+        }
 
-        return Text("Erro!");
+        return ErrorView("Erro desconhecido!");
       },
     ));
-  }
-
-  void _save(
-    Transacao transactionCreated,
-    String password,
-    BuildContext context,
-  ) async {
-    Transacao? transaction = await _send(transactionCreated, password, context);
-
-    await _showSuccessfulMessage(transaction, context);
-  }
-
-  Future<Transacao?> _send(Transacao transactionCreated, String password,
-      BuildContext context) async {
-    // setState(() {
-    //   _carregandoDados = true;
-    // });
-    final TransactionWebClient _webClient = TransactionWebClient();
-
-    final Transacao? transaction =
-        await _webClient.save(transactionCreated, password).catchError((e) {
-      if (FirebaseCrashlytics.instance.isCrashlyticsCollectionEnabled) {
-        FirebaseCrashlytics.instance.setCustomKey('exception', e.toString());
-        FirebaseCrashlytics.instance.setCustomKey('http_code', e.statusCode);
-        FirebaseCrashlytics.instance
-            .setCustomKey('http_body', transactionCreated.toString());
-
-        FirebaseCrashlytics.instance.recordError(e, null);
-      }
-
-      _showFailureMessage(context, message: 'Erro de timeout');
-    }, test: (e) => e is TimeoutException).catchError((e) {
-      if (FirebaseCrashlytics.instance.isCrashlyticsCollectionEnabled) {
-        FirebaseCrashlytics.instance.setCustomKey('exception', e.toString());
-        FirebaseCrashlytics.instance.setCustomKey('http_code', e.statusCode);
-        FirebaseCrashlytics.instance
-            .setCustomKey('http_body', transactionCreated.toString());
-
-        FirebaseCrashlytics.instance.recordError(e, null);
-      }
-
-      _showFailureMessage(context, message: e.message);
-    }, test: (e) => e is HttpException).catchError((e) {
-      if (FirebaseCrashlytics.instance.isCrashlyticsCollectionEnabled) {
-        FirebaseCrashlytics.instance.setCustomKey('exception', e.toString());
-        FirebaseCrashlytics.instance.setCustomKey('http_code', e.statusCode);
-        FirebaseCrashlytics.instance
-            .setCustomKey('http_body', transactionCreated.toString());
-
-        FirebaseCrashlytics.instance.recordError(e.toString(), null);
-      }
-
-      _showFailureMessage(context);
-    }, test: (e) => e is Exception).whenComplete(() {
-      // setState(() {
-      //   _carregandoDados = false;
-      // });
-    });
-    return transaction;
-  }
-
-  void _showFailureMessage(BuildContext context,
-      {message = 'Erro desconhecido'}) {
-    //Toast.show(message, context, gravity: Toast.BOTTOM);
-
-    showDialog(
-      context: context,
-      builder: (_) => NetworkGiffyDialog(
-        image: Image.asset('images/error.gif'),
-        title: Text('OPS',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
-        description: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-        entryAnimation: EntryAnimation.TOP,
-      ),
-    );
-  }
-
-  Future<void> _showSuccessfulMessage(
-      Transacao? transaction, BuildContext context) async {
-    if (transaction != null) {
-      await showDialog(
-          context: context,
-          builder: (contextDialog) {
-            return SuccessDialog('Transação gravada com sucesso');
-          });
-      Navigator.pop(context);
-    }
   }
 }
 
@@ -245,7 +219,9 @@ class _BasicForm extends StatelessWidget {
                           builder: (contextDialog) {
                             return TransactionAuthDialog(
                               onConfirm: (String password) {
-                                //_save(transactionCreated, password, context);
+                                BlocProvider.of<TransactionFormCubit>(context)
+                                    .save(
+                                        transactionCreated, password, context);
                               },
                             );
                           });
