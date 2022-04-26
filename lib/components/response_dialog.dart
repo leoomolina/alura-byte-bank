@@ -1,3 +1,4 @@
+import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class ResponseDialog extends StatelessWidget {
@@ -17,48 +18,54 @@ class ResponseDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Visibility(
-        child: Text(title),
-        visible: title.isNotEmpty,
+    return Scaffold(
+      appBar: ByteBankAppBar(
+        context: context,
+        title: 'Erro',
       ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Visibility(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Icon(
-                icon,
-                size: 64,
-                color: colorIcon,
-              ),
-            ),
-            visible: icon != null,
-          ),
-          Visibility(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Text(
-                message,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24.0,
+      body: AlertDialog(
+        title: Visibility(
+          child: Text(title),
+          visible: title.isNotEmpty,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Visibility(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Icon(
+                  icon,
+                  size: 64,
+                  color: colorIcon,
                 ),
               ),
+              visible: icon != null,
             ),
-            visible: message.isNotEmpty,
+            Visibility(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Text(
+                  message,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24.0,
+                  ),
+                ),
+              ),
+              visible: message.isNotEmpty,
+            )
+          ],
+        ),
+        actions: <Widget>[
+          ElevatedButton(
+            child: Text(buttonText),
+            onPressed: () => Navigator.pop(context),
           )
         ],
       ),
-      actions: <Widget>[
-        ElevatedButton(
-          child: Text(buttonText),
-          onPressed: () => Navigator.pop(context),
-        )
-      ],
     );
   }
 }

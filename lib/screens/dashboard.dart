@@ -3,6 +3,7 @@ import 'package:bytebank/screens/transactions_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../components/container.dart';
+import '../components/localization.dart';
 import '../models/name.dart';
 import 'name.dart';
 
@@ -19,6 +20,7 @@ class DashboardContainer extends BlocContainer {
 class DashboardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final i18n = DashboardViewI18N(context);
     return Scaffold(
       appBar: AppBar(
         title: BlocBuilder<NameCubit, String>(
@@ -41,21 +43,21 @@ class DashboardView extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 children: [
                   _FeatureItem(
-                    'Transferências',
+                    i18n.transferencia!,
                     Icons.monetization_on,
                     onClick: () {
                       _mostrarListaContatos(context);
                     },
                   ),
                   _FeatureItem(
-                    'Transaction Feed',
+                    i18n.transaction_feed!,
                     Icons.description,
                     onClick: () {
                       _mostrarListaTransacoes(context);
                     },
                   ),
                   _FeatureItem(
-                    'Alterar nome',
+                    i18n.alterar_nome!,
                     Icons.person_outline,
                     onClick: () {
                       _mostrarAlterarNome(context);
@@ -88,6 +90,19 @@ class DashboardView extends StatelessWidget {
       ),
     ));
   }
+}
+
+class DashboardViewI18N extends ViewI18N {
+  DashboardViewI18N(BuildContext context) : super(context);
+
+  String? get transferencia =>
+      localize({"pt-br": "Transferência", "en": "Transfer"});
+
+  String? get transaction_feed =>
+      localize({"pt-br": "Transaction Feed", "en": "Transaction Feed"});
+
+  String? get alterar_nome =>
+      localize({"pt-br": "Alterar nome", "en": "Change name"});
 }
 
 class _FeatureItem extends StatelessWidget {

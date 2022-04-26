@@ -1,4 +1,4 @@
-import 'package:bytebank/components/byte_bank_app_bar.dart';
+import 'package:bytebank/components/response_dialog.dart';
 import 'package:flutter/material.dart';
 
 class ErrorView extends StatelessWidget {
@@ -8,25 +8,6 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //Toast.show(message, context, gravity: Toast.BOTTOM);
-
-    /*return showDialog(
-      context: context,
-      builder: (_) => NetworkGiffyDialog(
-        image: Image.asset('images/error.gif'),
-        title: Text('OPS',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w600)),
-        description: Text(
-          message,
-          textAlign: TextAlign.center,
-        ),
-        entryAnimation: EntryAnimation.TOP,
-      ),
-    );*/
-    return Scaffold(
-      appBar: ByteBankAppBar(context: context, title: "Erro"),
-      body: Text(_message),
-    );
+    return FailureDialog(_message);
   }
 }

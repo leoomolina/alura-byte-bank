@@ -1,3 +1,5 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
 import 'dart:async';
 import 'package:bytebank/components/byte_bank_app_bar.dart';
 import 'package:bytebank/components/container.dart';
@@ -11,6 +13,7 @@ import 'package:bytebank/models/transacao.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:toast/toast.dart';
 import 'package:uuid/uuid.dart';
 
 @immutable
@@ -105,11 +108,9 @@ class TransactionFormContainer extends BlocContainer {
       child: BlocListener<TransactionFormCubit, TransactionFormState>(
           listener: (context, state) async {
             if (state is SentState) {
-              await showDialog(
-                  context: context,
-                  builder: (contextDialog) {
-                    return SuccessDialog('Transação gravada com sucesso');
-                  });
+              Toast.show('Transação gravada com sucesso', context,
+                  gravity: Toast.BOTTOM);
+
               Navigator.pop(context);
             }
           },
