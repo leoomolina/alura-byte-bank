@@ -2,6 +2,7 @@
 
 import 'package:bytebank/components/error.dart';
 import 'package:bytebank/components/progress.dart';
+import 'package:bytebank/http/webclients/i18n_webclient.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'container.dart';
@@ -29,7 +30,7 @@ class LoadedI18NMessagesState extends I18NMessagesState {
 }
 
 class I18NMessages {
-  Map<String, String> _messages;
+  Map<String, dynamic> _messages;
 
   I18NMessages(this._messages);
 
@@ -80,27 +81,33 @@ class ViewI18N {
 typedef Widget I18NWidgetCreator(I18NMessages messages);
 
 class I18NLoadingContainer extends BlocContainer {
-  final I18NWidgetCreator _creator;
+  I18NWidgetCreator? creator;
+  String? viewKey;
 
-  I18NLoadingContainer(this._creator);
+  I18NLoadingContainer(
+      {required String? viewKey, required I18NWidgetCreator? creator}) {
+    this.viewKey = viewKey!;
+    this.creator = creator!;
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<I18NMessagesCubit>(
       create: (BuildContext context) {
         final cubit = I18NMessagesCubit();
-        cubit.reload();
+        cubit.reload(i18NWebClient(viewKey!));
         return cubit;
       },
-      child: I18NLoadingView(this._creator),
+      child: I18NLoadingView(this.creator!, this.viewKey!),
     );
   }
 }
 
 class I18NLoadingView extends StatelessWidget {
   final I18NWidgetCreator _creator;
+  final String _viewKey;
 
-  I18NLoadingView(this._creator);
+  I18NLoadingView(this._creator, this._viewKey);
 
   @override
   Widget build(BuildContext context) {
@@ -121,13 +128,11 @@ class I18NLoadingView extends StatelessWidget {
 class I18NMessagesCubit extends Cubit<I18NMessagesState> {
   I18NMessagesCubit() : super(InitI18NMessagesState());
 
-  void reload() async {
+  void reload(i18NWebClient client) async {
     emit(LoadingI18NMessagesState());
 
-    emit(LoadedI18NMessagesState(I18NMessages({
-      "transferencia": "TRANSFER",
-      "transaction_feed": "TRANSACTION",
-      "alterar_nome": "NOME",
-    })));
+    client.findAll().then((messages) => emit(
+          LoadedI18NMessagesState(I18NMessages(messages)),
+        ));
   }
 }
