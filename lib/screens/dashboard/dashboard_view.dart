@@ -2,23 +2,11 @@ import 'package:bytebank/screens/contacts_list.dart';
 import 'package:bytebank/screens/transactions_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../components/container.dart';
-import '../components/localization.dart';
-import '../models/name.dart';
-import 'name.dart';
-
-class DashboardContainer extends BlocContainer {
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => NameCubit('Leonardo'),
-      child: I18NLoadingContainer(
-        viewKey: 'dashboard',
-        creator: (messages) => DashboardView(DashboardViewLazyI18N(messages)),
-      ),
-    );
-  }
-}
+import '../../components/container.dart';
+import '../../models/name.dart';
+import '../name.dart';
+import 'dashboard_feature_item.dart';
+import 'dashboard_i18n.dart';
 
 class DashboardView extends StatelessWidget {
   final DashboardViewLazyI18N _i18n;
@@ -48,21 +36,21 @@ class DashboardView extends StatelessWidget {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  _FeatureItem(
+                  FeatureItem(
                     _i18n.transferencia!,
                     Icons.monetization_on,
                     onClick: () {
                       _mostrarListaContatos(context);
                     },
                   ),
-                  _FeatureItem(
+                  FeatureItem(
                     _i18n.transaction_feed!,
                     Icons.description,
                     onClick: () {
                       _mostrarListaTransacoes(context);
                     },
                   ),
-                  _FeatureItem(
+                  FeatureItem(
                     _i18n.alterar_nome!,
                     Icons.person_outline,
                     onClick: () {
@@ -95,59 +83,5 @@ class DashboardView extends StatelessWidget {
         child: NameContainer(),
       ),
     ));
-  }
-}
-
-class DashboardViewLazyI18N {
-  final I18NMessages _messages;
-
-  DashboardViewLazyI18N(this._messages);
-
-  String? get transferencia => _messages.get("transferencia");
-
-  String? get transaction_feed => _messages.get("transaction_feed");
-
-  String? get alterar_nome => _messages.get("alterar_nome");
-}
-
-class _FeatureItem extends StatelessWidget {
-  final String name;
-  final IconData icon;
-  final Function onClick;
-
-  _FeatureItem(this.name, this.icon, {required this.onClick});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Material(
-        color: Theme.of(context).primaryColor,
-        child: InkWell(
-          onTap: () {
-            onClick();
-          },
-          child: Container(
-            padding: EdgeInsets.all(8.0),
-            width: 150,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  icon,
-                  color: Colors.white,
-                  size: 32,
-                ),
-                Text(
-                  name,
-                  style: TextStyle(color: Colors.white, fontSize: 16.0),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
